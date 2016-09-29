@@ -7,24 +7,24 @@
 //
 
 public enum Result<Value, E> {
-    case Success(Value)
-    case Failure(E)
+    case success(Value)
+    case failure(E)
 }
 
 public protocol Loadable: class {
     associatedtype Data : EmptyCheckable
-    var state: State<Data,ErrorType> { get set }
-    func loadData(completion: (Result<Data,ErrorType>) -> Void)
+    var state: State<Data,Error> { get set }
+    func loadData(_ completion: @escaping(Result<Data,Error>) -> Void)
 }
 
 public extension Loadable {
-    func reload(completion: () -> Void) {
+    func reload(_ completion: @escaping () -> Void) {
         state = state.toLoading()
         loadData { result in
             switch result {
-            case .Success(let data):
+            case .success(let data):
                 self.state = self.state.toReady(data)
-            case .Failure(let error):
+            case .failure(let error):
                 self.state = self.state.toError(error)
             }
             completion()

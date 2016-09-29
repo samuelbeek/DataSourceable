@@ -7,7 +7,7 @@
 //
 
 public protocol CellProviding {
-    func reuseIdentifier(forIndexPath indexPath: NSIndexPath) -> String
+    func reuseIdentifier(forIndexPath indexPath: IndexPath) -> String
 }
 
 public protocol TableViewCellProviding: CellProviding {

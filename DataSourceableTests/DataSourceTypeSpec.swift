@@ -40,7 +40,7 @@ class DataSourceTypeSpec: QuickSpec {
                     dataSource.data = data
                 }
                 it("should return the correct index") {
-                    for (index, value) in data.enumerate() {
+                    for (index, value) in data.enumerated() {
                         expect(dataSource.item(atIndex: index)).to(equal(value))
                     }
                 }

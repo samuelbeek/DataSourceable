@@ -2,7 +2,7 @@
 
 import UIKit
 import DataSourceable
-import XCPlayground
+import PlaygroundSupport
 
 let defaultReuseIdentifier = "default"
 
@@ -12,7 +12,7 @@ struct MovieTitleDataSource: TableViewDataSourceable, DataContaining {
     typealias Section = Data
     var data: Data? = ["Casino Royale","Quantum of Solace","Skyfall","Spectre"]
     
-    func reuseIdentifier(forIndexPath indexPath: NSIndexPath) -> String {
+    func reuseIdentifier(forIndexPath indexPath: IndexPath) -> String {
         return defaultReuseIdentifier
     }
 }
@@ -33,7 +33,8 @@ extension MovieTitleDataSource: TableViewCellProviding {
 let tableView: UITableView = UITableView(frame: CGRect(x: 0, y: 0, width: 320, height: 500))
 let dataSource = MovieTitleDataSource()
 let proxy = TableViewDataSourceProxy(dataSource: dataSource)
-tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: defaultReuseIdentifier)
+tableView.register(UITableViewCell.self, forCellReuseIdentifier: defaultReuseIdentifier)
 tableView.dataSource = proxy
-XCPlaygroundPage.currentPage.liveView = tableView
+
+PlaygroundPage.current.liveView = tableView
 

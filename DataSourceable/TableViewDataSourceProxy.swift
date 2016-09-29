@@ -6,30 +6,30 @@
 //  Copyright © 2015 Zeker Waar. All rights reserved.
 //
 
-public class TableViewDataSourceProxy: NSObject, UITableViewDataSource {
-    public let dataSource: TableViewDataSource
+open class TableViewDataSourceProxy: NSObject, UITableViewDataSource {
+    open let dataSource: TableViewDataSource
     
     public init(dataSource: TableViewDataSource) {
         self.dataSource = dataSource
     }
     
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    open func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.tableView(tableView, numberOfRowsInSection: section)
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    open func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         return dataSource.tableView(tableView, cellForRowAtIndexPath: indexPath)
     }
     
-    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    open func numberOfSections(in tableView: UITableView) -> Int {
         return dataSource.numberOfSectionsInTableView(tableView)
     }
     
-    public func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return dataSource.tableView(tableView, titleForHeaderInSection: section)
     }
     
-    public func tableView(tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+    open func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
         return dataSource.tableView(tableView, titleForFooterInSection: section)
     }
 }

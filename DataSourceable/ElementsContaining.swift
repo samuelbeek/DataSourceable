@@ -12,7 +12,7 @@ public protocol ElementsContaining {
     subscript(index: Int) -> Element? { get }
 }
 
-extension Indexable where Index == Int {
+extension Collection where Index == Int {
     var count: Int {
         return endIndex
     }

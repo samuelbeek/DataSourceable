@@ -6,20 +6,20 @@
 //  Copyright © 2015 Zeker Waar. All rights reserved.
 //
 
-import DataSourceable
+@testable import DataSourceable
 import Quick
 import Nimble
 
-private enum Error: ErrorType {
-    case Fail
+private enum DataSourcableError: Error {
+    case fail
 }
 
 class LoadingDataSource: Loadable {
     var fixtureData: [Int]
-    var state: State<[Int],ErrorType> = .Empty
-    func loadData(completion: (Result<[Int],ErrorType>) -> Void) {
-        dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0)) {
-            completion(Result.Success(self.fixtureData))
+    var state: State<[Int],Error> = .empty
+    func loadData(_ completion: @escaping (Result<[Int],Error>) -> Void) {
+        DispatchQueue.global().async {
+            completion(Result.success(self.fixtureData))
         }
     }
     init(fixtureData: [Int]) {
@@ -28,18 +28,20 @@ class LoadingDataSource: Loadable {
 }
 
 class FailingDataSource: LoadingDataSource {
-    override func loadData(completion: (Result<[Int],ErrorType>) -> Void) {
-        completion(Result.Failure(Error.Fail))
+    
+    override func loadData(_ completion: @escaping (Result<[Int],Error>) -> Void) {
+        completion(Result.failure(DataSourcableError.fail))
     }
+    
 }
 
 extension State: Equatable {}
 
 public func ==<D,E>(lhs: State<D,E>, rhs: State<D,E>) -> Bool {
     switch (lhs,rhs) {
-    case (.Empty,.Empty): return true
-    case (.Loading,.Loading): return true
-    case (.Ready,.Ready): return true
+    case (.empty,.empty): return true
+    case (.loading,.loading): return true
+    case (.ready,.ready): return true
     case (.Error,.Error): return true
     default: return false
     }
@@ -68,7 +70,7 @@ class LoadableSpec: QuickSpec {
                 it("moves to the error state") {
                     loading.reload({
                     })
-                    let errorState: State<[Int],ErrorType> = .Error(Error.Fail,nil)
+                    let errorState: State<[Int],Error> = .Error(DataSourcableError.fail,nil)
                     expect(loading.state).toEventually(equal(errorState))
                 }
             }

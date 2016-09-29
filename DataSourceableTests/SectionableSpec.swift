@@ -58,7 +58,7 @@ class SectionableSpec: QuickSpec {
                 it("should return the right items") {
                     for sectionIndex in 0..<sectionable.numberOfSections {
                         for index in 0..<sectionable.numberOfItems(inSection: sectionIndex) {
-                        expect(sectionable.item(atIndexPath: NSIndexPath(forItem: index, inSection: sectionIndex))).to(equal(data[sectionIndex][index]))
+                        expect(sectionable.item(atIndexPath: IndexPath(item: index, section: sectionIndex))).to(equal(data[sectionIndex][index]))
                         }
                     }
                     
@@ -81,8 +81,8 @@ class SectionableSpec: QuickSpec {
                 }
                 
                 it("should return the contents of data for the first section") {
-                    for (index,value) in data.enumerate() {
-                        expect(singleSection.item(atIndexPath: NSIndexPath(forItem: index, inSection: 0))).to(equal(value))
+                    for (index,value) in data.enumerated() {
+                        expect(singleSection.item(atIndexPath: IndexPath(item: index, section: 0))).to(equal(value))
                     }
                 }
             }

@@ -13,9 +13,9 @@ import Nimble
 
 struct SimpleCollectionViewDataSource: CollectionViewDataSourceable {
     typealias ItemType = UIColor
-    var sections: [[UIColor]]? = [[UIColor.redColor(),UIColor.blueColor(),UIColor.greenColor()],[UIColor.blackColor(),UIColor.whiteColor()],[UIColor.yellowColor(),UIColor.purpleColor(),UIColor.orangeColor(),UIColor.magentaColor()]]
+    var sections: [[UIColor]]? = [[.red, .blue, .green],[.black, .white],[.yellow,.purple,.orange,.magenta]]
 
-    func reuseIdentifier(forIndexPath indexPath: NSIndexPath) -> String {
+    func reuseIdentifier(forIndexPath indexPath: IndexPath) -> String {
         return "identifier"
     }
 }
@@ -35,8 +35,8 @@ extension SimpleCollectionViewDataSource: CollectionViewCellProviding {
 class CollectionViewDataSourceableSpec: QuickSpec {
     override func spec() {
         describe("CollectionViewDataSourceable") {
-            let collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout: UICollectionViewFlowLayout())
-            collectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "identifier")
+            let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+            collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "identifier")
             context("with a simple tableview data source") {
                 let simpleDataSource = SimpleCollectionViewDataSource()
                 let proxy = CollectionViewDataSourceProxy(dataSource: simpleDataSource)
@@ -50,22 +50,22 @@ class CollectionViewDataSourceableSpec: QuickSpec {
                 }
                 describe("numberOfSectionsInCollectionView") {
                     it("should return 0") {
-                        expect(collectionView.dataSource!.numberOfSectionsInCollectionView!(collectionView)).to(equal(3))
+                        expect(collectionView.dataSource!.numberOfSections!(in: collectionView)).to(equal(3))
                     }
                 }
                 
                 describe("cellForItemAtIndexPath") {
                     it("should return the configured cell") {
-                        for section in 0..<collectionView.dataSource!.numberOfSectionsInCollectionView!(collectionView) {
+                        for section in 0..<collectionView.dataSource!.numberOfSections!(in: collectionView) {
                             for row in 0..<collectionView.dataSource!.collectionView(collectionView, numberOfItemsInSection: section) {
-                                let indexPath = NSIndexPath(forRow: row, inSection: section)
-                                let cell = collectionView.dataSource!.collectionView(collectionView, cellForItemAtIndexPath:indexPath)
+                                let indexPath = IndexPath(row: row, section: section)
+                                let cell = collectionView.dataSource!.collectionView(collectionView, cellForItemAt:indexPath)
                                 expect(cell.contentView.backgroundColor).to(equal(simpleDataSource.sections![section][row]))
                             }
                         }
                     }
                     it("should return an unconfigured cell for a non-existing indexpath") {
-                        let cell = collectionView.dataSource!.collectionView(collectionView, cellForItemAtIndexPath:(NSIndexPath(forRow: 6, inSection: 6)))
+                        let cell = collectionView.dataSource!.collectionView(collectionView, cellForItemAt:(IndexPath(row: 6, section: 6)))
                         expect(cell.contentView.backgroundColor).to(beNil())
                     }
                     

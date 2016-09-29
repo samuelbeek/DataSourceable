@@ -7,23 +7,23 @@
 //
 
 public enum State<D : EmptyCheckable,E> {
-    case Empty
-    case Loading(D?)
-    case Ready(D)
+    case empty
+    case loading(D?)
+    case ready(D)
     case Error(E,D?)
     
     public func toLoading() -> State {
         switch self {
-        case .Ready(let oldData):
-            return .Loading(oldData)
+        case .ready(let oldData):
+            return .loading(oldData)
         default:
-            return .Loading(nil)
+            return .loading(nil)
         }
     }
     
-    public func toError(error:E) -> State {
+    public func toError(_ error:E) -> State {
         switch self {
-        case .Loading(let oldData):
+        case .loading(let oldData):
             return .Error(error,oldData)
         default:
             assert(false, "Invalid state transition to .Error from other than .Loading")
@@ -31,13 +31,13 @@ public enum State<D : EmptyCheckable,E> {
         }
     }
     
-    public func toReady(data: D) -> State {
+    public func toReady(_ data: D) -> State {
         switch self {
-        case .Loading:
+        case .loading:
             if data.isEmpty {
-                return .Empty
+                return .empty
             } else {
-                return .Ready(data)
+                return .ready(data)
             }
         default:
             assert(false, "Invalid state transition to .Ready from other than .Loading")
@@ -47,11 +47,11 @@ public enum State<D : EmptyCheckable,E> {
     
     public var data: D? {
         switch self {
-        case .Empty:
+        case .empty:
             return nil
-        case .Ready(let data):
+        case .ready(let data):
             return data
-        case .Loading(let data):
+        case .loading(let data):
             return data
         case .Error(_, let data):
             return data

@@ -23,7 +23,7 @@ struct SimpleTableViewDataSource: TestTableViewSourceable {
     var data: [String:[Int]]? = ["b":[2,4,8],"a":[1,1,2,3],"c":[3,6,9]]
 
     func tableView(tableView: UITableView, titleForHeaderInSection sectionIndex: Int) -> String? {
-        return data?.keys.sort()[sectionIndex]
+        return data?.keys.sorted()[sectionIndex]
     }
 }
 
@@ -34,8 +34,8 @@ extension SimpleTableViewDataSource: TableViewCellProviding {
 
 extension SimpleTableViewDataSource: SectionCreating {
     typealias Section = [Int]
-    func createSections(data: [String:[Int]]) -> [Section] {
-        return data.keys.sort().flatMap { data[$0] }
+    func createSections(_ data: [String:[Int]]) -> [Section] {
+        return data.keys.sorted().flatMap { data[$0] }
     }
     
 }
@@ -59,7 +59,7 @@ extension UITableViewCell: Configurable {
 
 protocol TestTableViewSourceable: TableViewDataSourceable {}
 extension TestTableViewSourceable {
-    func reuseIdentifier(forIndexPath indexPath: NSIndexPath) -> String {
+    func reuseIdentifier(forIndexPath indexPath: IndexPath) -> String {
         return "identifier"
     }
 }
@@ -67,8 +67,8 @@ extension TestTableViewSourceable {
 class TableViewDataSourceableSpec: QuickSpec {
     override func spec() {
         describe("TableViewDataSourceable") {
-            let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), style: .Plain)
-            tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "identifier")
+            let tableView = UITableView(frame: CGRect(x: 0, y: 0, width: 100, height: 100), style: .plain)
+            tableView.register(UITableViewCell.self, forCellReuseIdentifier: "identifier")
             context("with a simple tableview data source") {
                 let simpleDataSource = SimpleTableViewDataSource()
                 let proxy = TableViewDataSourceProxy(dataSource: simpleDataSource)
@@ -82,14 +82,14 @@ class TableViewDataSourceableSpec: QuickSpec {
                 }
                 describe("numberOfSectionsInTableView") {
                     it("should return 0") {
-                        expect(tableView.dataSource!.numberOfSectionsInTableView!(tableView)).to(equal(3))
+                        expect(tableView.dataSource!.numberOfSections!(in: tableView)).to(equal(3))
                     }
                 }
                 
                 describe("titleForHeaderInSection") {
                     it("should override the default implementation") {
-                        let titles = ["a","b","c"]
-                        for index in 0..<3 {
+                        let sections = ["a","b","c"]
+                        for index in 0..<titles.count {
                             expect(tableView.dataSource!.tableView!(tableView, titleForHeaderInSection: index)).to(equal(titles[index]))
                         }
                     }
@@ -105,16 +105,16 @@ class TableViewDataSourceableSpec: QuickSpec {
                 
                 describe("cellForRowAtIndexPath") {
                     it("should return the configured cell") {
-                        for section in 0..<tableView.dataSource!.numberOfSectionsInTableView!(tableView) {
+                        for section in 0..<tableView.dataSource!.numberOfSections!(in: tableView) {
                             for row in 0..<tableView.dataSource!.tableView(tableView, numberOfRowsInSection: section) {
-                                let indexPath = NSIndexPath(forRow: row, inSection: section)
-                                let cell = tableView.dataSource!.tableView(tableView, cellForRowAtIndexPath:indexPath)
+                                let indexPath = IndexPath(row: row, section: section)
+                                let cell = tableView.dataSource!.tableView(tableView, cellForRowAt:indexPath)
                                 expect(cell.textLabel?.text).to(equal("\(simpleDataSource.sections![section][row])"))
                             }
                         }
                     }
                     it("should return an unconfigured cell for a non-existing indexpath") {
-                        let cell = tableView.dataSource!.tableView(tableView, cellForRowAtIndexPath:(NSIndexPath(forRow: 6, inSection: 6)))
+                        let cell = tableView.dataSource!.tableView(tableView, cellForRowAt:(IndexPath(row: 6, section: 6)))
                         expect(cell.textLabel?.text).to(beNil())
                     }
 
@@ -131,7 +131,7 @@ class TableViewDataSourceableSpec: QuickSpec {
                 }
                 describe("numberOfSectionsInTableView") {
                     it("should return 0") {
-                        expect(proxy.numberOfSectionsInTableView(tableView)).to(equal(1))
+                        expect(proxy.numberOfSections(in: tableView)).to(equal(1))
                     }
                 }
                 
@@ -149,16 +149,16 @@ class TableViewDataSourceableSpec: QuickSpec {
                 
                 describe("cellForRowAtIndexPath") {
                     it("should return the configured cell") {
-                        for section in 0..<proxy.numberOfSectionsInTableView(tableView) {
+                        for section in 0..<proxy.numberOfSections(in:tableView) {
                             for row in 0..<proxy.tableView(tableView, numberOfRowsInSection: section) {
-                                let indexPath = NSIndexPath(forRow: row, inSection: section)
-                                let cell = proxy.tableView(tableView, cellForRowAtIndexPath:indexPath)
+                                let indexPath = IndexPath(row: row, section: section)
+                                let cell = proxy.tableView(tableView, cellForRowAt:indexPath)
                                 expect(cell.textLabel?.text).to(equal("\(customDataSource.sections!.item(atIndex: section)!.item(atIndex:row)!)"))
                             }
                         }
                     }
                     it("should return an unconfigured cell for a non-existing indexpath") {
-                        let cell = proxy.tableView(tableView, cellForRowAtIndexPath:(NSIndexPath(forRow: 6, inSection: 6)))
+                        let cell = proxy.tableView(tableView, cellForRowAt:(IndexPath(row: 6, section: 6)))
                         expect(cell.textLabel?.text).to(beNil())
                     }
                     
