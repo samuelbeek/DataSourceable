@@ -22,9 +22,10 @@ struct SimpleTableViewDataSource: TestTableViewSourceable {
     typealias ItemType = Int
     var data: [String:[Int]]? = ["b":[2,4,8],"a":[1,1,2,3],"c":[3,6,9]]
 
-    func tableView(tableView: UITableView, titleForHeaderInSection sectionIndex: Int) -> String? {
-        return data?.keys.sorted()[sectionIndex]
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return data?.keys.sorted()[section]
     }
+    
 }
 
 extension SimpleTableViewDataSource: TableViewCellProviding {
@@ -88,7 +89,7 @@ class TableViewDataSourceableSpec: QuickSpec {
                 
                 describe("titleForHeaderInSection") {
                     it("should override the default implementation") {
-                        let sections = ["a","b","c"]
+                        let titles = ["a","b","c"]
                         for index in 0..<titles.count {
                             expect(tableView.dataSource!.tableView!(tableView, titleForHeaderInSection: index)).to(equal(titles[index]))
                         }
