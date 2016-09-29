@@ -21,6 +21,8 @@ xcuserdata/
 *.moved-aside
 *.xcuserstate
 .DS_Store
+*.swp
+*.lock
 
 ## Obj-C/Swift specific
 *.hmap
@@ -30,4 +32,3 @@ xcuserdata/
 
 
 Carthage
-
